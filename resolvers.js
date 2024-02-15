@@ -2,16 +2,25 @@ const Employee = require('./models/Employee');
 const User = require('./models/Users');
 const bcrypt = require('bcrypt');
 
-const resolver = {
+exports.resolvers = {
 
     Query:{
 
-        getEmployees: async (parent, args) => {
+        getAllEmployees: async (parent, args) => {
             return Employee.find({});
         },
 
         getEmployee: async (parent, args) => {
-            return Employee.findById(args.id);
+            try{
+                employee = await Employee.findById(args.id);
+                if (!employee) {
+                    return JSON.stringify({status: false, message: 'No employee found'});
+                }
+                return employee;
+            }
+            catch (error) {
+                return JSON.stringify({status: false, "message" : "No ID found"});
+            }
         },
 
         Login: async (parent, args) => {
@@ -30,8 +39,6 @@ const resolver = {
 
             return user;
             
-
-
         },
 
     },
@@ -39,16 +46,33 @@ const resolver = {
     Mutation:{
 
         signUp: async (parent, args) => {
-            const user = new User({
+
+            if (!args.username || !args.email || !args.password) {
+                return new Error("Username, email, and password are required.");
+              }
+
+            try {
+              const newUser = new User({
                 username: args.username,
                 email: args.email,
                 password: args.password
-            });
-
-            return user.save();
-        },
+              });
+      
+              console.log("we are here");
+              await newUser.save();
+              return newUser;
+            } catch (error) {
+                return new Error("Error creating user: " + error.message);
+            }
+          }
+        ,
 
         addEmployee: async (parent, args) => {
+
+            if (!args.first_name || !args.last_name || !args.salary) {
+                throw new Error("First name, Last name and Salary are required");
+            }
+
             try {
                 const employee = new Employee({
                     first_name: args.first_name,
@@ -60,7 +84,13 @@ const resolver = {
                 const savedEmployee = await employee.save();
                 return savedEmployee;
             } catch (error) {
-                console.error("Error adding employee:", error);
+
+                if (error.code === 11000) {
+                    throw new Error("Employee already exists");
+                }
+                else if (error.name === "ValidationError") {
+                    throw new Error("Invalid input");
+                }
                 throw new Error("Failed to add employee");
             }
         },
@@ -71,10 +101,15 @@ const resolver = {
             if (!args.id) {
                 return JSON.stringify({status: false, message: 'No Id Found'});
             }
+
+            if (args.id.length !== 24) {
+                return JSON.stringify({status: false, message: 'Invalid Id'});
+            }
     
             try {
                 const employee = await Employee.findByIdAndUpdate(
                     args.id,
+
                     {
                         $set: {
                             first_name: args.first_name,
@@ -86,7 +121,12 @@ const resolver = {
                     },
                     { new: true }
                 );
-        
+
+                if (!employee) {
+                    return JSON.stringify({status: false, message: 'No employee found'});
+                }
+
+                    
                 return employee;
             } catch (err) {
                 console.log('Something went wrong when updating the employee', err);
@@ -104,5 +144,3 @@ const resolver = {
 
     }   
 };
-
-module.exports = resolver;

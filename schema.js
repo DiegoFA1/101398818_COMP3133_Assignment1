@@ -1,6 +1,7 @@
-const { buildSchema } = require('graphql');
+const { gql } = require('apollo-server-express');
 
-const schema = buildSchema(`
+exports.typeDefs = gql`
+
   type Employee {
     id: ID!
     first_name: String!
@@ -18,23 +19,22 @@ const schema = buildSchema(`
   }
 
   type Query {
-    Login(username_email: String!, password: String!): User!
-    getEmployees: [Employee]
-    getEmployee(id: ID!): Employee!
-    hello: String
+    Login(username_email: String!, password: String!): User
+    getAllEmployees: [Employee]
+    getEmployee(id: ID!): Employee
   }
 
   type Mutation {
 
     signUp(username: String!,
         email: String!,
-        password: String!): User!
+        password: String!): User
 
-    addEmployee(first_name: String!,
-        last_name: String!,
-        email: String!,
-        gender: String!,
-        salary: Float!): Employee!
+    addEmployee(first_name: String,
+        last_name: String,
+        email: String,
+        gender: String,
+        salary: Float): Employee
     
     updateEmployee(id: ID!,
         first_name: String,
@@ -43,9 +43,7 @@ const schema = buildSchema(`
         gender: String,
         salary: Float): Employee
     
-    deleteEmployee(id: ID!): Employee!
+    deleteEmployee(id: ID!): Employee
     
   }
-`);
-
-module.exports = schema;
+`;
