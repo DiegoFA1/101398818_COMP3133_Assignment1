@@ -14,7 +14,7 @@ const executableschema = makeExecutableSchema({
 const app = express();
 
 
-mongoose.connect('mongodb+srv://diego:dvD48hSyLDBEsNxX@cluster0.ma52oy9.mongodb.net/comp3133_assigment1', {
+mongoose.connect('mongodb+srv://diego:dvD48hSyLDBEsNxX@cluster0.ma52oy9.mongodb.net/assignment02', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
