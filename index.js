@@ -31,11 +31,12 @@ const server = new ApolloServer({
   schema: executableschema,
 });
 
+app.use('/graphql', cors(), express.json(), expressMiddleware(server));
+
 async function startServer() {
   await server.start();
-  server.applyMiddleware({ app });
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 4000;
 
   app.listen({ port: PORT }, () =>
     console.log(`🚀 Server ready at ${PORT}${server.graphqlPath}`)
