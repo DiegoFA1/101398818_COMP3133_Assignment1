@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const {typeDefs} = require('./schema');
 const {resolvers} = require('./resolvers');
 const {makeExecutableSchema} = require('graphql-tools');
-const Cors = require('cors');
+const cors = require('cors');
 
 const executableschema = makeExecutableSchema({
   typeDefs,
@@ -13,7 +13,7 @@ const executableschema = makeExecutableSchema({
 
 
 const app = express();
-app.use(Cors());
+app.use(cors());
 
 
 mongoose.connect('mongodb+srv://diego:dvD48hSyLDBEsNxX@cluster0.ma52oy9.mongodb.net/assignment02', {
@@ -31,10 +31,11 @@ const server = new ApolloServer({
   schema: executableschema,
 });
 
-app.use('/graphql', cors(), express.json(), expressMiddleware(server));
+app.use('/graphql', cors(), express.json());
 
 async function startServer() {
   await server.start();
+  server.applyMiddleware({ app });
 
   const PORT = process.env.PORT || 4000;
 
