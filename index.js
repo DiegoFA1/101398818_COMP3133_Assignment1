@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const {typeDefs} = require('./schema');
 const {resolvers} = require('./resolvers');
 const {makeExecutableSchema} = require('graphql-tools');
+const Cors = require('cors');
 
 const executableschema = makeExecutableSchema({
   typeDefs,
@@ -12,6 +13,7 @@ const executableschema = makeExecutableSchema({
 
 
 const app = express();
+app.use(Cors());
 
 
 mongoose.connect('mongodb+srv://diego:dvD48hSyLDBEsNxX@cluster0.ma52oy9.mongodb.net/assignment02', {
