@@ -1,5 +1,5 @@
-const Employee = require('./models/Employee');
-const User = require('./models/Users');
+const Employee = require('./models/Employee.js');
+const User = require('./models/Users.js');
 const bcrypt = require('bcrypt');
 
 exports.resolvers = {
